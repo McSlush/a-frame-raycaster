@@ -23,7 +23,9 @@
         }
       });
 
-      AFRAME.registerComponent('show-wireframe-on-hover', {
+
+
+      AFRAME.registerComponent('show-wireframe-on-click', {
 
           schema: {
               wireframe: {default: false}
@@ -51,15 +53,20 @@
 </head>
 <body>
     <a-scene stats>
-        <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"
-           event-set__enter="_event: mouseenter; color: #8FF7FF"
-           event-set__leave="_event: mouseleave; color: #4CC3D9"></a-box>
+        <a-assets>
+            <a-mixin id="voxel" geometry="primitive: box; height: 0.5; width: 0.5; depth: 0.5;"
+            material="shader: standard" color="black" position="-1 0.5 -4"></a-mixin>
+        </a-assets>
+
+        <a-box position="-1 0.5 -4" rotation="0 45 0" color="#4CC3D9"
+            change-color-on-hover="color:#8FF7FF" ></a-box>
 
            <a-text value="Now Interactable"  geometry="primitive:plane; width: 5;" position="0 2 -6"
             event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true;"
             event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false"></a-text>
 
-      <a-cylinder color="#FFC65D" position="1 0.75 -3" radius="0.5" height="1.5" change-color-on-hover="color: red"
+      <a-cylinder class="addTextBox" color="#FFC65D" position="1 0.75 -3" radius="0.5" height="1.5"  value="This is a cylinder"
+                change-color-on-hover="color: red"
                   event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true"
                   event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false"
                   event-set__enter2="_event: mouseenter; _target: #cylinderText2; visible: true"
@@ -71,8 +78,7 @@
       </a-cylinder>
 
       <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"
-                  show-wireframe-on-hover=""></a-plane>
-
+                  show-wireframe-on-click=""></a-plane>
 
     <a-box color="#EF2D5E" position="0 1 -4" change-color-on-hover="color: blue"></a-box>
 
@@ -80,6 +86,20 @@
         <a-cursor></a-cursor>
       </a-camera>
     </a-scene>
+
+    <script>
+    //https://css-tricks.com/minecraft-webvr-html-using-frame/
+    document.querySelector(".addTextBox").addEventListener("mouseenter", function(evt) {
+          var newVoxelEl = document.createElement("a-entity");
+
+          newVoxelEl.setAttribute("mixin", "voxel");
+
+          newVoxelEl.setAttribute("position")
+
+          newVoxelEl.setAttribute('position', {x:-1,y:1,z:-1});
+          this.appendChild(newVoxelEl);
+    });
+    </script>
 </body>
 
 </html>
