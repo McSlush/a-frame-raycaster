@@ -26,8 +26,6 @@
             }
         });
 
-
-
         AFRAME.registerComponent('show-wireframe-on-click', {
 
             schema: {
@@ -95,7 +93,6 @@
         AFRAME.registerComponent("get-texture-type", {
             init: function() {
                 this.el.addEventListener("mouseup", function() {
-                    console.log(this.getAttribute("class"))
                     var texture = this.getAttribute("class");
                     objectToTexture.setAttribute("material", "src", "#" + texture);
                     objectToTexture.setAttribute("color", "white");
@@ -103,22 +100,50 @@
                 })
             }
         });
+
+        AFRAME.registerComponent("toggle-visibility", {
+            init: function() {
+                var data = this.data;
+                var el = this.el;
+
+                el.addEventListener('mouseenter', function() {
+                    console.log("hej")
+                    el.setAttribute("material", 'visible', false);
+                });
+
+                el.addEventListener('mouseleave', function() {
+                    el.setAttribute("material", 'visible', true);
+                });
+            }
+        })
     </script>
 </head>
 
 <body>
     <a-scene stats>
         <a-assets>
+            <a-asset-item id="chair" src="obj/model.dae"></a-asset-item>
+            <a-asset-item id="boombox" src="obj/BoomBox/glTF/BoomBox.gltf"></a-asset-item>
+            <a-asset-item id="boombox2" src="obj/BoomBox/glTF2/BoomBox.gltf"></a-asset-item>
+
             <img id="crate" src="texture/crate.gif">
             <img id="wood" src="texture/wood.jpg">
-            <a-mixin id="voxel" get-texture-type geometry="primitive: box; height: 0.5; width: 0.5; depth: 0.5;" ></a-mixin>
+            <a-mixin id="voxel" get-texture-type geometry="primitive: box; height: 0.5; width: 0.5; depth: 0.5;"></a-mixin>
         </a-assets>
+        <a-sky color="#6EBAA7"></a-sky>
+
+        <a-entity collada-model="#chair" position="-3 0 -2"></a-entity>
+
+        <a-entity gltf-model="#boombox" toggle-visibility position="-2 2 -2" scale="50 50 50" event-set__leave="_event: mouseleave; _target: #boombox; visible: false"></a-entity>
+        <a-entity gltf-model="#boombox2" toggle-visibility visible="false" position="-3 2 -2" scale="50 50 50">
+              <a-animation attribute="visible" begin="2000" to="true"></a-animation>
+        </a-entity>
 
         <a-box position="-1 0.5 -4" rotation="0 45 0" color="#4CC3D9" change-color-on-hover="color:#8FF7FF"></a-box>
 
         <a-text value="Now Interactable" geometry="primitive:plane; width: 5;" align="center" position="0 2 -6" event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true;" event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false"></a-text>
 
-        <a-cylinder class="addTextBox" color="#FFC65D" position="1 0.75 -3" radius="0.5" height="1.5" value="This is a cylinder"
+        <a-cylinder toggle-visibility class="addTextBox" color="#FFC65D" position="1 0.75 -3" radius="0.5" height="1.5" value="This is a cylinder"
             change-color-on-hover="color: red" event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true"
             event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false"
             event-set__enter2="_event: mouseenter; _target: #cylinderText2; visible: true"
@@ -129,11 +154,12 @@
 
         <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" show-wireframe-on-click=""></a-plane>
 
-        <a-box show-texture-options-on-hover="1: crate; 2: wood;" color="#EF2D5E" position="0 2 -4" change-color-on-hover="color: white"></a-box>
-
-        <a-camera>
-            <a-cursor></a-cursor>
-        </a-camera>
+        <a-box show-texture-options-on-hover="1: crate; 2: wood;" color="#EF2D5E" position="0 3 -4" change-color-on-hover="color: white"></a-box>
+        <a-entity id="camera-wrapper">
+            <a-camera>
+                <a-cursor></a-cursor>
+            </a-camera>
+        </a-entity>
     </a-scene>
 
     <script>
